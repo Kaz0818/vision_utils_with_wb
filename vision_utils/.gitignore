@@ -1,0 +1,51 @@
+# macOSの不要ファイル
+.DS_Store
+
+# Pythonキャッシュ
+__pycache__/
+*.pyc
+
+# Jupyterのチェックポイント
+.ipynb_checkpoints/
+
+# 仮想環境(venv, env)
+venv/
+env/
+
+# データファイル(必要に応じて)
+data/
+*.csv
+*.h5
+*.pt
+*.pth
+*.npz
+
+# モデル保存ファイル、出力フォルダ
+outputs/
+checkpoints/
+
+# VSCode関連(使っている場合)
+.vscode/
+.cursor/
+
+# 学習データのダウンロードフォルダ(例:FashionMNIST)
+**/fmnist_data/
+
+# TensorBoardログ
+runs/
+logs/
+results/
+notebooks/runs_exp3/
+notebooks/runs/*
+notebooks/logs/*
+
+# ゴミ箱系（Trash関連）
+.Trash-*/
+.trash/
+*/.Trash-*
+~/.local/share/Trash/*
+**/.Trash-*
+**/.trash
+
+# github　templete
+.github

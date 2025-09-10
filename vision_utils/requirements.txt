@@ -1,0 +1,10 @@
+torch
+numpy
+pandas 
+matplotlib
+tensorboard
+pillow
+tqdm
+scikit-image
+scikit-learn
+git+https://github.com/jacobgil/pytorch-grad-cam.git
