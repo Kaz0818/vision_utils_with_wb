@@ -1,5 +1,4 @@
 from __future__ import annotations
-import os
 from typing import List, Optional, Tuple, TYPE_CHECKING
 from pathlib import Path
 import math
@@ -11,16 +10,19 @@ from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 
-# wandb はオプショナル依存にする
-try:
-    import wandb as _wandb
-    WANDB_AVAILABLE = True
-except Exception:
-    _wandb = None  # type: ignore
-    WANDB_AVAILABLE = False
 
 if TYPE_CHECKING:
     import wandb
+
+# ---- 変更2: 動的参照関数を追加 ---------------------------------
+def _get_wandb():
+    """使う直前に import を試みる。失敗したら None を返す。"""
+    try:
+        import wandb  # runtime import
+        return wandb
+    except Exception:
+        return None
+
 
 # ---------------------------
 # ユーティリティ
@@ -307,12 +309,13 @@ class GradCAMVisualizer:
             if images:
                 print(f"個別画像を保存しました: {out_dir}")
 
-        # W&Bログ：保存後にログ（wandb が利用可能な場合のみ）
-        if WANDB_AVAILABLE and _wandb is not None:
+        # ---- 変更3: 使う直前で import 試行し、あればログ ----
+        wb = _get_wandb()
+        if wb is not None and self.wand_run is not None:
             try:
-                self.wand_run.log({f"{prefix}/grid_image": _wandb.Image(str(grid_path), caption=f"{prefix} grid")})
-                # ファイル自体もRunに添付
-                self.wand_run.save(str(grid_path), base_path=self.wand_run.dir)
+                self.wand_run.log({f"{prefix}/grid_image": wb.Image(str(grid_path), caption=f"{prefix} grid")})
+                # 任意: ファイルもRunに添付するなら（Artifacts推奨）
+                # self.wand_run.save(str(grid_path), base_path=self.wand_run.dir)
             except Exception as e:
                 print(f"W&Bログはスキップ: {e}")
         else:
