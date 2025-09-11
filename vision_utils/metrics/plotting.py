@@ -1,9 +1,9 @@
+from __future__ import annotations
 from pathlib import Path
-from typing import List
+from typing import List, TYPE_CHECKING, Any
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-import wandb
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -11,12 +11,25 @@ from sklearn.metrics import confusion_matrix, classification_report
 from tqdm import tqdm
 import numpy as np  # ★ 追加：型ゆらぎ対策で使用
 
-class Visualizer: 
-    def __init__(self, wandb_run: wandb.wandb_sdk.wandb_run.Run, writer=None):
+# wandb はオプショナル依存にする
+try:
+    import wandb as _wandb  # 実行時に使用
+    WANDB_AVAILABLE = True
+except Exception:
+    _wandb = None  # type: ignore
+    WANDB_AVAILABLE = False
+
+if TYPE_CHECKING:  # 型チェック時のみ正確な型を使う
+    import wandb
+
+class Visualizer:
+    def __init__(self, wandb_run: "wandb.wandb_sdk.wandb_run.Run", writer: Any | None = None):
         self.writer = writer
         
         if not wandb_run:
             raise ValueError("wandb.Run object must be provided.")
+        if not WANDB_AVAILABLE:
+            raise ImportError("wandb がインストールされていないため Visualizer は使用できません。'pip install wandb' または環境変数 WANDB_DISABLED=true をご検討ください。")
         self.wandb_run = wandb_run
         
         # wandbの実行ディレクトリ配下に成果物用のディレクトリを作成
@@ -84,7 +97,8 @@ class Visualizer:
         plt.close()
         
         # W&Bに画像をログとして記録
-        self.wandb_run.log({"evaluation/confusion_matrix": wandb.Image(str(cm_path))})
+        if WANDB_AVAILABLE and _wandb is not None:
+            self.wandb_run.log({"evaluation/confusion_matrix": _wandb.Image(str(cm_path))})
         # ファイル自体も保存
         self.wandb_run.save(str(cm_path), base_path=self.wandb_run.dir)
         print("[Visualizer] Logged confusion matrix to W&B.")

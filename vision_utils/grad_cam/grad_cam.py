@@ -1,15 +1,26 @@
+from __future__ import annotations
 import os
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, TYPE_CHECKING
 from pathlib import Path
 import math
 import numpy as np
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
-import wandb
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
+
+# wandb はオプショナル依存にする
+try:
+    import wandb as _wandb
+    WANDB_AVAILABLE = True
+except Exception:
+    _wandb = None  # type: ignore
+    WANDB_AVAILABLE = False
+
+if TYPE_CHECKING:
+    import wandb
 
 # ---------------------------
 # ユーティリティ
@@ -74,7 +85,7 @@ class GradCAMVisualizer:
 
     def __init__(
         self,
-        wandb_run: wandb.wandb_sdk.wandb_run.Run, 
+        wandb_run: "wandb.wandb_sdk.wandb_run.Run",
         model: nn.Module,
         model_path: Path,
         class_names: Optional[List[str]] = None,

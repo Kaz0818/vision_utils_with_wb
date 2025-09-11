@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple, Optional, Dict, Union
@@ -10,15 +11,9 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from zoneinfo import ZoneInfo
-import wandb
 
-# W&Bの処理
-if not wandb.login():
-    wandb.login()
-    
-# 全部のログをこのdirectoryにまとめる
-wandb_results = (Path.cwd() /"wandb"/"results")
-wandb_results.mkdir(parents=True, exist_ok=True)
+# 注意：import 時の外部サービス初期化（wandb.login 等）は行わない。
+# W&B の初期化は Notebook/スクリプト側で明示的に実施してください。
 class Trainer:
     """
     モデルの訓練、評価、推論を管理するクラス。
@@ -37,7 +32,7 @@ class Trainer:
     scheduler: Optional[_LRScheduler] = None,
     early_stopping_patience: Optional[int] = None,
     checkpoint_dir: str = "checkpoints",
-    wandb_run: Optional[wandb.wandb_sdk.wandb_run.Run] = None,
+    wandb_run: Optional["wandb.wandb_sdk.wandb_run.Run"] = None,
 ):
         
         self.model = model
