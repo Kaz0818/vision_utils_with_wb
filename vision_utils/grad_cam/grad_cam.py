@@ -307,11 +307,16 @@ class GradCAMVisualizer:
             if images:
                 print(f"個別画像を保存しました: {out_dir}")
 
-        # W&Bログ：保存後にログ
-        try:
-            self.wand_run.log({f"{prefix}/grid_image": wandb.Image(str(grid_path), caption=f"{prefix} grid")})
-        except Exception as e:
-            print(f"W&Bログはスキップ: {e}")
+        # W&Bログ：保存後にログ（wandb が利用可能な場合のみ）
+        if WANDB_AVAILABLE and _wandb is not None:
+            try:
+                self.wand_run.log({f"{prefix}/grid_image": _wandb.Image(str(grid_path), caption=f"{prefix} grid")})
+                # ファイル自体もRunに添付
+                self.wand_run.save(str(grid_path), base_path=self.wand_run.dir)
+            except Exception as e:
+                print(f"W&Bログはスキップ: {e}")
+        else:
+            print("W&B未導入または無効化のため、ログはスキップされました。")
 
     def _idx_to_name(self, idx: int) -> str:
         if self.class_names is None:
