@@ -13,3 +13,7 @@ wandb*
 data/
 logs/
 checkpoints/
+
+# log/data
+outputs/
+mlruns/
