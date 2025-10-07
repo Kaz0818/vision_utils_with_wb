@@ -1,0 +1,2 @@
+# configs/criterion/cross_entropy.yaml
+_target_: torch.nn.CrossEntropyLoss

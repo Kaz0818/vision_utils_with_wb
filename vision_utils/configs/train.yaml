@@ -1,0 +1,21 @@
+# configs/train.yaml
+defaults:
+  - model: simple_cnn
+  - optimizer: sgd
+  - criterion: cross_entropy
+  - trainer: default
+  - _self_
+
+seed: 42
+
+data: 
+  dataset: MNIST
+  data_dir: ${hydra:runtime.cwd}/datasets
+  batch_size: 64
+  split_ratio: 0.8
+  num_workers: 0
+
+train: 
+  epochs: 5
+  device: cpu
+
