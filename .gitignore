@@ -10,7 +10,7 @@ wheels/
 # Virtual environments
 .venv
 wandb*
-data/
+data_dir/
 logs/
 checkpoints/
 
