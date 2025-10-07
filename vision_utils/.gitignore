@@ -13,7 +13,6 @@ venv/
 env/
 
 # データファイル(必要に応じて)
-data/
 *.csv
 *.h5
 *.pt
@@ -23,6 +22,7 @@ data/
 # モデル保存ファイル、出力フォルダ
 outputs/
 checkpoints/
+datasets/
 
 # VSCode関連(使っている場合)
 .vscode/
