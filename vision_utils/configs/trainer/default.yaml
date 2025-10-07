@@ -1,0 +1,7 @@
+# ✅ 良い例（トップレベルに _target_ を直書きする）
+_target_: trainers.train.Trainer
+num_epochs: ${train.epochs}
+device: ${train.device}
+checkpoint_dir: checkpoints
+early_stopping_patience: null
+wandb_run: null   # 渡さないなら null でOK

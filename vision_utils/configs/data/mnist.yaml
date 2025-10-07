@@ -1,0 +1,2 @@
+data_dir: ../vision_utils/data_dir/mnist_data
+batch_size: 128

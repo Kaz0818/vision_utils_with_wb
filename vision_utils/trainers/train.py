@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from zoneinfo import ZoneInfo
+import wandb
 
 # 注意：import 時の外部サービス初期化（wandb.login 等）は行わない。
 # W&B の初期化は Notebook/スクリプト側で明示的に実施してください。
@@ -27,7 +28,6 @@ class Trainer:
     criterion: nn.Module,
     optimizer: Optimizer,
     num_epochs: int,
-    config: Dict,
     device: Optional[torch.device] = None,
     scheduler: Optional[_LRScheduler] = None,
     early_stopping_patience: Optional[int] = None,
@@ -44,19 +44,18 @@ class Trainer:
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.scheduler = scheduler
         self.early_stopping_patience = early_stopping_patience
-        self.config = config
         self.wandb_run = wandb_run
 
         self.timestamp = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y%m%d_%H%M%S')
         self.model_name = self.model.__class__.__name__
 
         # 追加: アーキ名を保存（configにarchが無ければクラス名を使う）
-        self.arch = str(self.config.get("arch", self.model_name))
+        # self.arch = str(self.config.get("arch", self.model_name))
 
         # checkpoint_dirをRun×Archで分離（main側で既に分けているならそのまま同じ結果）
         base_ckpt_dir = Path(checkpoint_dir)
-        if self.arch not in str(base_ckpt_dir):
-            base_ckpt_dir = base_ckpt_dir / self.arch
+        # if self.arch not in str(base_ckpt_dir):
+        #     base_ckpt_dir = base_ckpt_dir / self.arch
         self.checkpoint_dir = base_ckpt_dir
         self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
@@ -145,10 +144,10 @@ class Trainer:
             if n is not None:
                 return n
         # 3) configから
-        v = self.config.get("num_classes")
-        if isinstance(v, int) and v > 0:
-            return v
-        return None
+        # v = self.config.get("num_classes")
+        # if isinstance(v, int) and v > 0:
+        #     return v
+        # return None
 
     def _save_checkpoint(self, val_loss: float):
         """モデルのチェックポイントを保存"""
@@ -156,7 +155,7 @@ class Trainer:
 
         state = {
             'model_state_dict': self.model.state_dict(),
-            'arch': self.arch,                          # アーキを明示保存
+            # 'arch': self.arch,                          # アーキを明示保存
             'num_classes': self._infer_num_classes(),   # 可能なら保存
             'epoch': self.current_epoch,
             'optimizer_state_dict': self.optimizer.state_dict(),
