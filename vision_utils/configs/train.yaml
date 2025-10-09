@@ -4,18 +4,20 @@ defaults:
   - optimizer: sgd
   - criterion: cross_entropy
   - trainer: default
+  - logging: base
   - _self_
 
 seed: 42
 
 data: 
-  dataset: MNIST
-  data_dir: ${hydra:runtime.cwd}/datasets
+  name: CIFAR10
+  root: ${hydra:runtime.cwd}/datasets
+  train: true
   batch_size: 64
   split_ratio: 0.8
   num_workers: 0
 
 train: 
-  epochs: 5
+  epochs: 1
   device: cpu
 
