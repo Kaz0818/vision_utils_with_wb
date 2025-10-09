@@ -49,13 +49,9 @@ class Trainer:
         self.timestamp = datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y%m%d_%H%M%S')
         self.model_name = self.model.__class__.__name__
 
-        # 追加: アーキ名を保存（configにarchが無ければクラス名を使う）
-        # self.arch = str(self.config.get("arch", self.model_name))
-
         # checkpoint_dirをRun×Archで分離（main側で既に分けているならそのまま同じ結果）
         base_ckpt_dir = Path(checkpoint_dir)
-        # if self.arch not in str(base_ckpt_dir):
-        #     base_ckpt_dir = base_ckpt_dir / self.arch
+        
         self.checkpoint_dir = base_ckpt_dir
         self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
@@ -143,11 +139,6 @@ class Trainer:
             n = try_head(self.model, path)
             if n is not None:
                 return n
-        # 3) configから
-        # v = self.config.get("num_classes")
-        # if isinstance(v, int) and v > 0:
-        #     return v
-        # return None
 
     def _save_checkpoint(self, val_loss: float):
         """モデルのチェックポイントを保存"""
@@ -166,10 +157,6 @@ class Trainer:
         torch.save(state, best_filepath)
         self.best_model_path = best_filepath
         print(f"\n[INFO] Checkpoint saved: {best_filepath} (Val Loss: {val_loss:.4f})")
-
-        # 任意: 人間に読みやすいファイル名も併存させたい場合は以下を有効化
-        # pretty = self.checkpoint_dir / f"{self.arch}_best_valloss{val_loss:.4f}_ep{self.current_epoch+1:03d}.pth"
-        # torch.save(state, pretty)
 
     def train(self) -> Dict[str, List[float]]:
         """訓練ループ全体を実行"""
