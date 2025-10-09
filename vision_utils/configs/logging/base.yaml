@@ -1,0 +1,14 @@
+# configs/logging/base.yaml
+wandb:
+  enabled: true          # ← true にすれば使う
+  project: my-vision-portfolio
+  entity: null            # チームがあれば入れる
+  name: null              # 未指定なら自動命名
+  mode: online            # online/offline/disabled
+  dir: ${hydra:runtime.cwd}/  # 保存先（Hydraの出力ディレクトリ対策）
+
+mlflow:
+  enabled: true          # ← true にすれば使う
+  tracking_uri: file://${hydra:runtime.cwd}/mlruns
+  experiment: vision-portfolio
+  run_name: null          # 未指定なら自動命名

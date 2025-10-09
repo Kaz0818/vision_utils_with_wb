@@ -4,6 +4,7 @@ defaults:
   - optimizer: sgd
   - criterion: cross_entropy
   - trainer: default
+  - logging: base
   - _self_
 
 seed: 42

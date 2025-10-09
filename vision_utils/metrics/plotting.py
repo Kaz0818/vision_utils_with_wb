@@ -57,6 +57,9 @@ class Visualizer:
             model.to(device)
             model.eval()
             print(f"[Visualizer] Loaded model checkpoint from: {model_path}")
+        elif model_path is None:
+            model.to(device)
+            model.eval()
         else:
             print(f"[Visualizer] ERROR: Model path not found: {model_path}")
             return
